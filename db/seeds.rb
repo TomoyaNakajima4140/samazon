@@ -42,8 +42,8 @@ array_number = 0
 product_ids.each do
   product_name = Faker::Music::RockBand.name
   Product.create(
-    name: product_name
-    description: product_name,
+     name: product_name,
+     description: product_name,
   price: product_ids[array_number],
   category_id: category_ids[array_number]
   )
