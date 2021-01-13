@@ -16,6 +16,10 @@ class UsersController < ApplicationController
   def edit_address
   end 
   
+  def favorite
+      @favorites = @user.likees(Product)
+  end 
+  
   def update_password
    if password_set?
      @user.update_password(user_params) 
