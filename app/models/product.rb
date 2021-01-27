@@ -3,10 +3,8 @@ class Product < ApplicationRecord
   has_many :reviews
   acts_as_likeable
   
- PER = 15
-
-scope :display_list, -> (page) { page(page).per(PER) }
-scope :on_category, -> (category) { where(category_id: category) }
+  extend DisplayList
+  scope :on_category, -> (category) { where(category_id: category) }
   scope :sort_order, -> (order) { order(order) }
 
   scope :category_products, -> (category, page) { 
