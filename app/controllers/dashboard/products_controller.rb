@@ -4,6 +4,7 @@ class Dashboard::ProductsController < ApplicationController
   layout "dashboard/dashboard"
 
   def index
+    logger.debug("--------------------------------------------- index start")
     sort_query = []
     @sorted = ""
 
@@ -13,7 +14,7 @@ class Dashboard::ProductsController < ApplicationController
       @sorted = params[:sort]
     end
 
-    if params[:keyword] != null
+    if params[:keyword] != nil
       keyword = trim(params[:keyword])
       @total_count = Product.search_for_id_and_name(keyword).count
       @products = Product.search_for_id_and_name(keyword).sort_order(sort_query).display_list(params[:pages])
@@ -24,7 +25,9 @@ class Dashboard::ProductsController < ApplicationController
     end
     
     @sort_list = Product.sort_list
-    redirect_to dashboard_products_path
+    logger.debug("--------------------------------------------- index end")
+    # redirect_to dashboard_products_path
+    
   end
 
   def new
@@ -59,4 +62,5 @@ class Dashboard::ProductsController < ApplicationController
     def product_params
       params.require(:product).permit(:name, :description, :price, :category_id)
     end
+  
 end
