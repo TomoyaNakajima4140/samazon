@@ -20,6 +20,12 @@ class UsersController < ApplicationController
       @favorites = @user.likees(Product)
   end 
   
+  def destroy
+    @user.deleted_flg = User.switch_flg(user.deleted_flg)
+    @user.update
+    redirect_to mypage_users_url
+  end
+
   def update_password
    if password_set?
      @user.update_password(user_params) 
