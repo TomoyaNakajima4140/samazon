@@ -32,7 +32,7 @@
         <td><%= user.email %></td>
         <td><%= user.phone %></td>
          <td>
-           <%= form_with model: user, url: dashboard_users_path, local: true do |f| %>
+           <%= form_with model: user, url: dashboard_user_path(user), method: :delete, local: true do |f| %>
              <% if user.deleted_flg %>
                <%= f.submit "復帰", class: "btn dashboard-delete-link" %>
              <% else %>

@@ -14,9 +14,12 @@ class Dashboard::UsersController < ApplicationController
  end
  
  def destroy
+     
+     
      user = User.find(params[:id])
+    #  user.update(deleted_flg: User.switch_flg(user.deleted_flg))
      user.deleted_flg = User.switch_flg(user.deleted_flg)
-     user.update
+     user.save
      redirect_to dashboard_users_path
  end
 end
