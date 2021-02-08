@@ -1,6 +1,6 @@
 class Dashboard::ProductsController < ApplicationController
   before_action :authenticate_admin!
-  before_action :set_product, only: %w[show edit update destroy]
+  before_action :set_product, only: %w[show edit update destroy ]
   layout "dashboard/dashboard"
 
   def index
@@ -27,17 +27,18 @@ class Dashboard::ProductsController < ApplicationController
     @sort_list = Product.sort_list
     logger.debug("--------------------------------------------- index end")
     # redirect_to dashboard_products_path
-    
+    @product = Product.new(params[:recommend_flag])
   end
 
   def new
     @categories = Category.all
+    @product = Product.new(params[:recommend_flag])
   end
 
   def create
-    product = Product.new(product_params)
+    product = Product.new(params[:recommend_flag])
     product.save
-    redirect_to _pathdashboard_products
+    redirect_to dashboard_products_path
   end
 
   def edit
@@ -60,7 +61,8 @@ class Dashboard::ProductsController < ApplicationController
     end
 
     def product_params
-      params.require(:product).permit(:name, :description, :price, :recommend_flag, :carriage_flag, :category_id)
+      params.require(:product).permit(:name, :description, :price, :recommend_flag, :carriage_flag, :category_id, :image)
     end
+    
   
 end
