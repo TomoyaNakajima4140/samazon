@@ -13,6 +13,6 @@ class DashboardController < ApplicationController
                  end
  
      @total = ShoppingCart.bought_cart_ids.count
-     @sort_list = Product.sort_list
+     @sort_list = ShoppingCart.sort_list
     end 
 end

@@ -5,6 +5,14 @@ class ShoppingCart < ApplicationRecord
                                user_cart.nil? ? ShoppingCart.create(user_id: user.id)
                                               : user_cart }
     scope :bought_cart_ids, -> { where(buy_flag: true).pluck(:id) }
+    scope :bought_carts, -> (ids) { where("id LIKE ?", "%#{ids}%") }
+    scope :bought_cart_user_ids_list, -> { where(buy_flag: true).pluck(:id, :user_id) }
+    scope :sort_list, -> { 
+      {
+        "日別" => "day", 
+        "月別" => "month"
+      }
+    }
     CARRIAGE=800
     FREE_SHIPPING=0
    def self.get_monthly_billings
@@ -32,7 +40,24 @@ class ShoppingCart < ApplicationRecord
      end
      return hash
    end
+   
+   def self.get_orders(code = {})
+    code.present? ? bought_carts = bought_carts(code[:code])
+                   : bought_carts = ""
+     return if bought_carts.blank?
+     cart_users_list = bought_cart_user_ids_list
+     user_ids_and_names_hash = User.where(id: cart_users_list).pluck(:id, :name).to_h
  
+     hash = Hash.new { |h,k| h[k] = {} }
+ 
+     bought_carts.each do |bought_cart|
+       hash[bought_cart.id][:user_name] = user_ids_and_names_hash[bought_cart.user_id]
+       hash[bought_cart.id][:updated_at] = bought_cart.updated_at.to_datetime.strftime("%Y-%m-%d %H:%M:%S")
+       hash[bought_cart.id][:price_total] = bought_cart.total.fractional / 100
+     end
+     return hash
+   end
+   
    def self.get_daily_billings
      buy_ids = bought_cart_ids
      return if buy_ids.nil?
