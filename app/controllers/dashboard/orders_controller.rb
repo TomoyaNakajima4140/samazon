@@ -6,11 +6,11 @@ class Dashboard::OrdersController < ApplicationController
     code = params[:code].present? ?
                                   params[:code]
                                   : ""
-  @orders = code.present? ?
+    @orders = code.present? ?
                             ShoppingCart.get_orders({code: code})
                             : ShoppingCart.get_orders
     @orders_array = Kaminari.paginate_array(@orders.to_a).page(params[:page]).per(15)
-    @total = @orders.count
+    @total = @orders_array.count
   end
 
 end

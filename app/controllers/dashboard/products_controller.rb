@@ -4,18 +4,18 @@ class Dashboard::ProductsController < ApplicationController
   layout "dashboard/dashboard"
 
   def index
-    logger.debug("--------------------------------------------- index start")
-    sort_query = []
+    sort_query = {}
     @sorted = ""
 
     if params[:sort].present?
-      slices = split(' ', params[:sort])
+      slices = params[:sort].split(' ')
       sort_query[slices[0]] = slices[1]
       @sorted = params[:sort]
     end
 
     if params[:keyword] != nil
-      keyword = trim(params[:keyword])
+      keyword = params[:keyword].strip
+      logger.debug("=================================== product_controller keyword = #{keyword}")
       @total_count = Product.search_for_id_and_name(keyword).count
       @products = Product.search_for_id_and_name(keyword).sort_order(sort_query).display_list(params[:pages])
     else
@@ -25,18 +25,17 @@ class Dashboard::ProductsController < ApplicationController
     end
     
     @sort_list = Product.sort_list
-    logger.debug("--------------------------------------------- index end")
     # redirect_to dashboard_products_path
     @product = Product.new(params[:recommend_flag])
   end
 
   def new
     @categories = Category.all
-    @product = Product.new(params[:recommend_flag])
+    @product = Product.new
   end
 
   def create
-    product = Product.new(params[:recommend_flag])
+    product = Product.new(product_params)
     product.save
     redirect_to dashboard_products_path
   end
@@ -55,13 +54,35 @@ class Dashboard::ProductsController < ApplicationController
     redirect_to dashboard_products_path
   end
   
+  def import
+  end
+
+  def import_csv
+    if params[:file] && File.extname(params[:file].original_filename) == ".csv"
+      Product.import_csv(params[:file])
+      flash[:success] = "CSVでの一括登録が成功しました!"
+      redirect_to import_csv_dashboard_products_url
+    else
+      flash[:danger] = "CSVが追加されていません。CSVを追加してください。"
+      redirect_to import_csv_dashboard_products_url
+    end
+  end
+
+  def download_csv
+    send_file(
+      "#{Rails.root}/public/csv/products.csv",
+      filename: "products.csv",
+      type: :csv
+    )
+  end
+  
   private
     def set_product
       @product = Product.find(params[:id])
     end
 
     def product_params
-      params.require(:product).permit(:name, :description, :price, :recommend_flag, :carriage_flag, :category_id, :image)
+      params.require(:product).permit(:name, :description, :price, :recommended_flag, :carriage_flag, :category_id, :image)
     end
     
   
