@@ -37,6 +37,7 @@ class Product < ApplicationRecord
   scope :recently_products, -> (number) { order(created_at: "desc").take(number) }
   scope :recommend_products, -> (number) { where(recommended_flag: true).take(number) }
   scope :check_products_carriage_list, -> (product_ids) { where(id: product_ids).pluck(:carriage_flag)}
+  scope :pluck_id_name_shipping_cost_flag_list, -> (bought_cart_items) {where(id: bought_cart_items)}
   
   def self.import_csv(file)
      new_products = []
